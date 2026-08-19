@@ -1,4 +1,5 @@
-export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://objectparse.example.com";
+export const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://objectparse.example.com";
 
 export const SITE_NAME = "Objectparse";
 
