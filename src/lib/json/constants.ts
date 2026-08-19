@@ -1,0 +1,6 @@
+export const DEFAULT_DEBOUNCE_MS = 200;
+export const LARGE_DOC_BYTES = 500_000;
+export const LARGE_DOC_DEBOUNCE_MS = 500;
+export const SEARCH_RESULT_LIMIT = 500;
+export const MAX_SAFE_SIGNIFICANT_DIGITS = 15;
+export const WORKER_THRESHOLD_NODES = 200_000;
