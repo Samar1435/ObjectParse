@@ -82,18 +82,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${fontSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
+      {ADSENSE_CLIENT_ID ? (
+        <script
+          async
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT_ID}`}
+          crossOrigin="anonymous"
+        />
+      ) : null}
       <body className="min-h-full flex flex-col">
         <Script id="site-scale-init" strategy="beforeInteractive">
           {`(function(){try{var s=localStorage.getItem(${JSON.stringify(SITE_SCALE_STORAGE_KEY)});if(s){document.documentElement.style.fontSize=s+"%";}}catch(e){}})();`}
         </Script>
-        {ADSENSE_CLIENT_ID ? (
-          <Script
-            async
-            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT_ID}`}
-            crossOrigin="anonymous"
-            strategy="afterInteractive"
-          />
-        ) : null}
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <TooltipProvider>
             <SiteHeader />
