@@ -390,9 +390,9 @@ export function JsonTool({ initialContent }: { initialContent?: string }) {
       {/* Fixed height, not min-height: Monaco/overflow-y-auto below only clip internally once their ancestor chain is a definite size, else long JSON grows the whole page instead of scrolling in place. */}
       <div className="h-[32rem]">
         {!hasContent ? (
-          <div className="h-full rounded-lg border">{editorElement}</div>
+          <div className="h-full rounded-lg border dark:bg-card">{editorElement}</div>
         ) : isDesktop ? (
-          <ResizablePanelGroup orientation="horizontal" className="rounded-lg border">
+          <ResizablePanelGroup orientation="horizontal" className="rounded-lg border dark:bg-card">
             <ResizablePanel defaultSize="60" minSize="30">
               {editorElement}
             </ResizablePanel>
@@ -407,10 +407,12 @@ export function JsonTool({ initialContent }: { initialContent?: string }) {
               <TabsTrigger value="editor">Editor</TabsTrigger>
               <TabsTrigger value="results">Results</TabsTrigger>
             </TabsList>
-            <TabsContent value="editor" className="rounded-lg border">
+            <TabsContent value="editor" className="flex-1 rounded-lg border dark:bg-card">
               {editorElement}
             </TabsContent>
-            <TabsContent value="results">{resultsElement}</TabsContent>
+            <TabsContent value="results" className="flex-1 rounded-lg border dark:bg-card">
+              {resultsElement}
+            </TabsContent>
           </Tabs>
         )}
       </div>

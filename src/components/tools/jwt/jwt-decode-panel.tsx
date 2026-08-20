@@ -267,13 +267,13 @@ export function JwtDecodePanel() {
           payload grows the whole page instead of scrolling in place. */}
       {isDesktop ? (
         <div className="h-[30rem]">
-          <ResizablePanelGroup orientation="horizontal" className="rounded-lg border">
+          <ResizablePanelGroup orientation="horizontal" className="rounded-lg border dark:bg-card">
             <ResizablePanel defaultSize="50" minSize="30">
-              {encodedElement}
+              <div className="h-full overflow-y-auto p-3 dark:bg-card">{encodedElement}</div>
             </ResizablePanel>
             <ResizableHandle withHandle />
             <ResizablePanel defaultSize="50" minSize="30">
-              {decodedElement}
+              <div className="h-full overflow-y-auto p-3 dark:bg-card">{decodedElement}</div>
             </ResizablePanel>
           </ResizablePanelGroup>
         </div>
@@ -284,10 +284,10 @@ export function JwtDecodePanel() {
               <TabsTrigger value="encoded">Encoded</TabsTrigger>
               <TabsTrigger value="decoded">Decoded</TabsTrigger>
             </TabsList>
-            <TabsContent value="encoded" className="rounded-lg border">
+            <TabsContent value="encoded" className="flex-1 rounded-lg border dark:bg-card">
               {encodedElement}
             </TabsContent>
-            <TabsContent value="decoded" className="rounded-lg border">
+            <TabsContent value="decoded" className="flex-1 rounded-lg border dark:bg-card">
               {decodedElement}
             </TabsContent>
           </Tabs>

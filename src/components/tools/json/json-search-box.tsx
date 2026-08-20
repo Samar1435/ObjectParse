@@ -36,12 +36,12 @@ export function JsonSearchBox({
   return (
     <div
       className={cn(
-        "relative w-full transition-[max-width] duration-150 ease-out",
-        focused || value ? "max-w-sm" : "max-w-xs",
+        "relative w-full max-w-sm",
         sticky ? "sticky top-0 z-10 bg-background py-1.5" : null,
         className
       )}
     >
+      <div className="absolute -inset-0.5 rounded-xl bg-ring/10 blur-sm dark:bg-ring/20 -z-10" />
       <SearchIcon className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
       <Input
         value={value}
@@ -49,7 +49,7 @@ export function JsonSearchBox({
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         placeholder="Search keys or values…"
-        className="pl-8 pr-8"
+        className="pl-8 pr-8 shadow-[0_0_0_1px_rgba(var(--ring)/0.15)] focus-visible:shadow-[0_0_6px_rgba(var(--ring)/0.25)]"
       />
       {value ? (
         <Button
