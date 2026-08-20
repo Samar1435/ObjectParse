@@ -70,6 +70,9 @@ export const metadata: Metadata = {
     title: "Objectparse — Free Online JSON, JWT & Base64 Tools",
     description: SITE_DESCRIPTION,
   },
+  other: {
+    "google-adsense-account": ADSENSE_CLIENT_ID,
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
