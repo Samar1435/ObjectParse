@@ -71,7 +71,7 @@ export function Base64DecodePanel() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 rounded-lg border p-3 dark:bg-card">
         <Textarea
           value={input}
           onChange={(event) => setInput(event.target.value)}
@@ -101,7 +101,7 @@ export function Base64DecodePanel() {
       ) : null}
 
       {textResult ? (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 rounded-lg border p-3 dark:bg-card">
           <Textarea value={textResult.text} readOnly className="min-h-32 font-mono text-sm" />
           <div className="flex items-center justify-between">
             <span className="text-xs text-muted-foreground">
