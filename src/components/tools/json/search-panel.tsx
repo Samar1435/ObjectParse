@@ -50,9 +50,11 @@ export function SearchPanel({
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-sm font-medium">{term.trim() ? `Results for “${term.trim()}”` : "Search"}</span>
+        <span className="min-w-0 truncate text-sm font-medium">
+          {term.trim() ? `Results for “${term.trim()}”` : "Search"}
+        </span>
         <Select value={mode} onValueChange={(next) => onModeChange(next as SearchMode)}>
-          <SelectTrigger size="sm">
+          <SelectTrigger size="sm" className="shrink-0">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -94,7 +96,7 @@ export function SearchPanel({
                     )}
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <span className="truncate font-mono text-xs text-muted-foreground">{match.path}</span>
+                      <span className="min-w-0 truncate font-mono text-xs text-muted-foreground">{match.path}</span>
                       {match.range ? (
                         <span className="shrink-0 text-[11px] text-muted-foreground">
                           Line {match.range.start.line}:{match.range.start.column}
