@@ -37,7 +37,7 @@ export function ClaimsSearchBox({
     <div
       className={cn(
         "relative w-full max-w-sm",
-        sticky ? "sticky top-0 z-10 bg-background py-1.5" : null,
+        sticky ? "surface-fill sticky top-0 z-10 py-1.5" : null,
         className
       )}
     >
@@ -49,7 +49,7 @@ export function ClaimsSearchBox({
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         placeholder="Search claims by key or value…"
-        className="pl-8 pr-8 shadow-[0_0_0_1px_rgba(var(--ring)/0.15)] focus-visible:shadow-[0_0_6px_rgba(var(--ring)/0.25)]"
+        className="bg-background pl-8 pr-8 dark:bg-background"
       />
       {value ? (
         <Button

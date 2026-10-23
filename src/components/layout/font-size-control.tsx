@@ -22,7 +22,7 @@ export function FontSizeControl() {
       <button
         type="button"
         onClick={reset}
-        aria-label="Reset page size to 100%"
+        aria-label="Reset page size to default"
         title="Reset page size"
         className="min-w-9 px-1 text-center text-xs font-medium text-muted-foreground tabular-nums transition-colors hover:text-foreground"
       >

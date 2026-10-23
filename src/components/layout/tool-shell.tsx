@@ -33,7 +33,9 @@ export function ToolShell({
         {description ? <p className="text-sm text-muted-foreground">{description}</p> : null}
       </div>
       <div className="flex flex-1 flex-col">{children}</div>
-      <AdSlot variant="in-content" slot={AD_SLOTS.inContent} />
+      <div className="ad-zone">
+        <AdSlot variant="in-content" slot={AD_SLOTS.inContent} />
+      </div>
       {seoContent}
       <RelatedTools currentSlug={currentSlug} />
     </SidebarAdLayout>

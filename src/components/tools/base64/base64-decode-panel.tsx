@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { toast } from "sonner";
 import { AlertTriangle, Check, Copy, Download, FileWarning } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -71,7 +72,7 @@ export function Base64DecodePanel() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-2 rounded-lg border p-3 dark:bg-card">
+      <div className="flex flex-col gap-2 tool-surface rounded-lg border p-3">
         <Textarea
           value={input}
           onChange={(event) => setInput(event.target.value)}
@@ -101,7 +102,7 @@ export function Base64DecodePanel() {
       ) : null}
 
       {textResult ? (
-        <div className="flex flex-col gap-2 rounded-lg border p-3 dark:bg-card">
+        <div className="flex flex-col gap-2 tool-surface rounded-lg border p-3">
           <Textarea value={textResult.text} readOnly className="min-h-32 font-mono text-sm" />
           <div className="flex items-center justify-between">
             <span className="text-xs text-muted-foreground">
@@ -121,12 +122,33 @@ export function Base64DecodePanel() {
         <Alert>
           <FileWarning />
           <AlertTitle>Binary content detected</AlertTitle>
-          <AlertDescription className="flex flex-wrap items-center justify-between gap-2">
-            <span>This decodes to {formatBytes(binaryResult.bytes.length)} of binary data, not valid UTF-8 text.</span>
-            <Button variant="secondary" size="sm" onClick={handleDownload}>
-              <Download />
-              Download file
-            </Button>
+          <AlertDescription className="flex flex-col gap-2">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span>This decodes to {formatBytes(binaryResult.bytes.length)} of binary data, not valid UTF-8 text.</span>
+              <Button variant="secondary" size="sm" onClick={handleDownload}>
+                <Download />
+                Download file
+              </Button>
+            </div>
+            <span className="text-xs">
+              For a type-specific preview, try{" "}
+              <Link href="/base64-to-image" className="underline underline-offset-2">
+                Base64 to Image
+              </Link>
+              ,{" "}
+              <Link href="/base64-to-pdf" className="underline underline-offset-2">
+                Base64 to PDF
+              </Link>
+              ,{" "}
+              <Link href="/base64-to-hex" className="underline underline-offset-2">
+                Base64 to Hex
+              </Link>
+              , or{" "}
+              <Link href="/base64-to-file" className="underline underline-offset-2">
+                Base64 to File
+              </Link>
+              .
+            </span>
           </AlertDescription>
         </Alert>
       ) : null}

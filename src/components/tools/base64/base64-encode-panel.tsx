@@ -93,9 +93,9 @@ export function Base64EncodePanel() {
         }}
         onDragLeave={() => setIsDragging(false)}
         onDrop={handleDrop}
-        className={`flex flex-col gap-2 rounded-lg border-2 border-dashed p-2 transition-colors ${
+        className={`tool-surface flex flex-col gap-2 rounded-lg border-2 border-dashed p-2 transition-colors ${
           isDragging ? "border-primary bg-primary/5" : "border-transparent"
-        } dark:bg-card`}
+        }`}
       >
         {file ? (
           <div className="flex items-center justify-between rounded-lg border bg-muted/40 px-3 py-2 text-sm">
@@ -128,7 +128,7 @@ export function Base64EncodePanel() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-2 rounded-lg border p-3 dark:bg-card">
+      <div className="tool-surface flex flex-col gap-2 rounded-lg border p-3">
         <Textarea
           value={output}
           readOnly

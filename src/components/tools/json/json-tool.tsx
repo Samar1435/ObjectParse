@@ -9,10 +9,12 @@ import { Braces, ChevronDown, ChevronUp, Minimize2, SortAsc, Wrench } from "luci
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CodeEditor } from "@/components/editor/code-editor";
 import { JsonSearchBox } from "@/components/tools/json/json-search-box";
 import { ResultsPanel } from "@/components/tools/json/results-panel";
 import { RepairDialog } from "@/components/tools/json/repair-dialog";
+import { StatsPanel } from "@/components/tools/json/stats-panel";
 import { matchKey, type SearchMatchWithRange, type SearchResultWithRanges } from "@/components/tools/json/search-panel";
 import { CopyIconButton } from "@/components/tools/jwt/copy-icon-button";
 import { useJsonEngine } from "@/hooks/use-json-engine";
@@ -21,15 +23,18 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 import { truncate, MAX_PAYLOAD_LENGTH } from "@/lib/history";
 import { useHandoffStore } from "@/store/handoff-store";
 import { useHistoryStore } from "@/store/history-store";
+import { cn } from "@/lib/utils";
 import {
   buildLineStartIndex,
   collectSearchSuggestions,
+  CODEGEN_LANGUAGES,
   formatJson,
   minifyJson,
   offsetToRange,
   pointerToSegments,
   repairJson,
   searchJson,
+  type CodegenLanguageId,
   type JsonDiagnostic,
   type Position,
   type RepairResult,
@@ -62,6 +67,7 @@ export function JsonTool({ initialContent }: { initialContent?: string }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchMode, setSearchMode] = useState<SearchMode>("both");
   const [searchMatchCase, setSearchMatchCase] = useState(false);
+  const [languageId, setLanguageId] = useState<CodegenLanguageId>("typescript");
 
   const [activeMatch, setActiveMatch] = useState<SearchMatchWithRange | null>(null);
 
@@ -281,6 +287,11 @@ export function JsonTool({ initialContent }: { initialContent?: string }) {
     setRepairOpen(false);
   };
 
+  const handleLanguageChange = (next: CodegenLanguageId) => {
+    setLanguageId(next);
+    setResultsTab("convert");
+  };
+
   const editorElement = (
     <div className="flex h-full flex-col">
       {activeMatch?.range ? (
@@ -315,7 +326,6 @@ export function JsonTool({ initialContent }: { initialContent?: string }) {
   const resultsElement = (
     <ResultsPanel
       parseResult={parseResult}
-      rawText={content}
       activeTab={resultsTab}
       onActiveTabChange={setResultsTab}
       searchTerm={searchTerm}
@@ -327,13 +337,14 @@ export function JsonTool({ initialContent }: { initialContent?: string }) {
       activeMatchKey={activeMatch ? matchKey(activeMatch) : null}
       onJumpToDiagnostic={handleJumpToDiagnostic}
       onJumpToMatch={handleJumpToMatch}
+      languageId={languageId}
     />
   );
 
   return (
     <div className="flex flex-1 flex-col gap-2">
       {hasContent ? (
-        <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border p-2">
+        <div className="tool-surface flex flex-wrap items-center justify-between gap-2 rounded-lg border p-2">
           <div className="flex flex-wrap items-center gap-2">
             <Button variant="outline" size="sm" disabled={!canFormat} onClick={handleFormat}>
               <Braces />
@@ -351,48 +362,71 @@ export function JsonTool({ initialContent }: { initialContent?: string }) {
               <Wrench />
               Fix it
             </Button>
+            <Select
+              value={languageId}
+              onValueChange={(next) => handleLanguageChange(next as CodegenLanguageId)}
+              disabled={!canFormat}
+            >
+              <SelectTrigger size="sm" className="w-40">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {CODEGEN_LANGUAGES.map((lang) => (
+                  <SelectItem key={lang.id} value={lang.id}>
+                    {lang.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <JsonSearchBox value={searchTerm} onChange={handleSearchTermChange} suggestions={searchSuggestions} />
-            {searchTerm.trim() && enrichedSearchResult ? (
-              <div className="flex items-center gap-1">
-                <span className="px-1 text-xs text-muted-foreground tabular-nums">
-                  {enrichedSearchResult.matches.length > 0
-                    ? `${activeMatchIndex + 1}/${enrichedSearchResult.matches.length}`
-                    : "0/0"}
-                </span>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon-sm"
-                  aria-label="Previous match"
-                  disabled={enrichedSearchResult.matches.length === 0}
-                  onClick={() => handleStepMatch(-1)}
-                >
-                  <ChevronUp />
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon-sm"
-                  aria-label="Next match"
-                  disabled={enrichedSearchResult.matches.length === 0}
-                  onClick={() => handleStepMatch(1)}
-                >
-                  <ChevronDown />
-                </Button>
-              </div>
-            ) : null}
+            {/* Always mounted (space reserved via `invisible` rather than conditional rendering) so
+                typing/clearing a search term never changes the toolbar's height or wrapping. */}
+            <div
+              className={cn(
+                "flex items-center gap-1",
+                searchTerm.trim() && enrichedSearchResult ? null : "invisible"
+              )}
+            >
+              <span className="px-1 text-xs text-muted-foreground tabular-nums">
+                {enrichedSearchResult && enrichedSearchResult.matches.length > 0
+                  ? `${activeMatchIndex + 1}/${enrichedSearchResult.matches.length}`
+                  : "0/0"}
+              </span>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon-sm"
+                aria-label="Previous match"
+                disabled={!enrichedSearchResult || enrichedSearchResult.matches.length === 0}
+                onClick={() => handleStepMatch(-1)}
+              >
+                <ChevronUp />
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon-sm"
+                aria-label="Next match"
+                disabled={!enrichedSearchResult || enrichedSearchResult.matches.length === 0}
+                onClick={() => handleStepMatch(1)}
+              >
+                <ChevronDown />
+              </Button>
+            </div>
           </div>
         </div>
       ) : null}
 
+      {hasContent ? <StatsPanel value={parseResult?.value} rawText={content} /> : null}
+
       {/* Fixed height, not min-height: Monaco/overflow-y-auto below only clip internally once their ancestor chain is a definite size, else long JSON grows the whole page instead of scrolling in place. */}
       <div className="h-[32rem]">
         {!hasContent ? (
-          <div className="h-full rounded-lg border dark:bg-card">{editorElement}</div>
+          <div className="tool-surface h-full rounded-lg border">{editorElement}</div>
         ) : isDesktop ? (
-          <ResizablePanelGroup orientation="horizontal" className="rounded-lg border dark:bg-card">
+          <ResizablePanelGroup orientation="horizontal" className="tool-surface rounded-lg border">
             <ResizablePanel defaultSize="60" minSize="30">
               {editorElement}
             </ResizablePanel>
@@ -407,10 +441,10 @@ export function JsonTool({ initialContent }: { initialContent?: string }) {
               <TabsTrigger value="editor">Editor</TabsTrigger>
               <TabsTrigger value="results">Results</TabsTrigger>
             </TabsList>
-            <TabsContent value="editor" className="flex-1 rounded-lg border dark:bg-card">
+            <TabsContent value="editor" className="tool-surface flex-1 rounded-lg border">
               {editorElement}
             </TabsContent>
-            <TabsContent value="results" className="flex-1 rounded-lg border dark:bg-card">
+            <TabsContent value="results" className="tool-surface flex-1 rounded-lg border">
               {resultsElement}
             </TabsContent>
           </Tabs>
