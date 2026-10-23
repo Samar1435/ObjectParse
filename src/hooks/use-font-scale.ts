@@ -9,6 +9,11 @@ const MAX_SCALE = 150;
 const STEP = 10;
 const DEFAULT_SCALE = 100;
 
+// Matches Tailwind's `lg` breakpoint — large monitors get a bigger default; smaller
+// viewports (laptops, tablets, phones) keep the original 100% baseline.
+const LARGE_SCREEN_QUERY = "(min-width: 1024px)";
+const LARGE_SCREEN_DEFAULT_SCALE = 120;
+
 function clampScale(value: number) {
   return Math.min(MAX_SCALE, Math.max(MIN_SCALE, value));
 }
@@ -17,14 +22,31 @@ function applyScale(scale: number) {
   document.documentElement.style.fontSize = `${scale}%`;
 }
 
+function getViewportDefaultScale() {
+  return window.matchMedia(LARGE_SCREEN_QUERY).matches ? LARGE_SCREEN_DEFAULT_SCALE : DEFAULT_SCALE;
+}
+
 export function useFontScale() {
   const [scale, setScale] = useState(DEFAULT_SCALE);
 
   useEffect(() => {
     const stored = Number(window.localStorage.getItem(SITE_SCALE_STORAGE_KEY));
-    const initial = Number.isFinite(stored) && stored > 0 ? clampScale(stored) : DEFAULT_SCALE;
-    setScale(initial);
-    applyScale(initial);
+    if (Number.isFinite(stored) && stored > 0) {
+      const initial = clampScale(stored);
+      setScale(initial);
+      applyScale(initial);
+      return;
+    }
+
+    const mql = window.matchMedia(LARGE_SCREEN_QUERY);
+    const applyViewportDefault = () => {
+      const initial = getViewportDefaultScale();
+      setScale(initial);
+      applyScale(initial);
+    };
+    applyViewportDefault();
+    mql.addEventListener("change", applyViewportDefault);
+    return () => mql.removeEventListener("change", applyViewportDefault);
   }, []);
 
   const setAndPersist = useCallback((next: number) => {
@@ -36,7 +58,7 @@ export function useFontScale() {
 
   const increase = useCallback(() => setAndPersist(scale + STEP), [scale, setAndPersist]);
   const decrease = useCallback(() => setAndPersist(scale - STEP), [scale, setAndPersist]);
-  const reset = useCallback(() => setAndPersist(DEFAULT_SCALE), [setAndPersist]);
+  const reset = useCallback(() => setAndPersist(getViewportDefaultScale()), [setAndPersist]);
 
   return {
     scale,
