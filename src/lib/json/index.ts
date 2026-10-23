@@ -10,4 +10,5 @@ export * from "./pointer";
 export * from "./edit";
 export * from "./live-validator";
 export * from "./constants";
+export * from "./codegen";
 export type { JsonWorkerRequest, JsonWorkerResponse } from "./worker";

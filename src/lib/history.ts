@@ -1,13 +1,25 @@
 import type { JwtAlgorithm } from "@/lib/jwt";
 
-export type ToolSlug = "base64" | "json" | "jwt";
+export type ToolSlug =
+  | "base64"
+  | "json"
+  | "jwt"
+  | "base64-to-image"
+  | "base64-to-pdf"
+  | "base64-to-hex"
+  | "base64-to-file";
 
 export type HistoryPayload =
   | { tool: "base64"; mode: "encode"; text: string; urlSafe: boolean }
   | { tool: "base64"; mode: "decode"; input: string }
   | { tool: "json"; content: string }
   | { tool: "jwt"; mode: "decode"; token: string }
-  | { tool: "jwt"; mode: "encode"; alg: JwtAlgorithm; headerJson: string; payloadJson: string };
+  | { tool: "jwt"; mode: "encode"; alg: JwtAlgorithm; headerJson: string; payloadJson: string }
+  | { tool: "base64-to-image"; mode: "decode"; input: string }
+  | { tool: "base64-to-pdf"; mode: "decode"; input: string }
+  | { tool: "base64-to-hex"; mode: "decode"; input: string }
+  | { tool: "base64-to-hex"; mode: "encode"; hex: string }
+  | { tool: "base64-to-file"; mode: "decode"; input: string };
 
 export interface HistoryEntry {
   id: string;
