@@ -3,6 +3,7 @@ import { SidebarAdLayout } from "@/components/layout/sidebar-ad-layout";
 import { AdSlot } from "@/components/ads/ad-slot";
 import { AD_SLOTS } from "@/lib/ads-config";
 import { GuideCard } from "@/components/guides/guide-card";
+import { GuidesSeoContent } from "@/components/guides/guides-seo-content";
 import { guidesRegistry } from "@/lib/guides-registry";
 
 const TITLE = "Developer Guides";
@@ -30,6 +31,7 @@ export default function GuidesIndexPage() {
           <GuideCard key={guide.slug} guide={guide} />
         ))}
       </div>
+      <GuidesSeoContent />
     </SidebarAdLayout>
   );
 }

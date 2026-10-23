@@ -49,7 +49,9 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
+  /* Page canvas sits a shade darker than --card on purpose: with both at pure white,
+     bordered panels had nothing to cast a shadow onto and read as flat outlines. */
+  --background: oklch(0.96 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
@@ -123,9 +125,56 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* Flat white/black pages read as unfinished — a faint vignette gives the page itself
+       some depth without competing with content. Light mode darkens toward the edges;
+       dark mode catches a soft highlight near the top, like light hitting a raised surface. */
+    background-image: radial-gradient(ellipse 1200px 600px at 50% -10%, oklch(0 0 0 / 4%), transparent 60%);
+    background-repeat: no-repeat;
+  }
+  .dark body {
+    background-image:
+      radial-gradient(ellipse 1200px 600px at 50% -10%, oklch(1 0 0 / 9%), transparent 55%),
+      radial-gradient(ellipse 900px 500px at 100% 0%, oklch(1 0 0 / 4%), transparent 50%);
   }
   html {
     @apply font-sans;
+  }
+}
+
+@layer components {
+  /* The card fill + dark-mode sheen, shared by .tool-surface and anything nested inside a
+     surface (e.g. a sticky bar) that needs to blend into it exactly rather than approximate
+     it with its own bg-card, which would show as a mismatched patch once the two drift. */
+  .surface-fill {
+    @apply bg-card;
+  }
+  .dark .surface-fill {
+    background-image: linear-gradient(to bottom, oklch(1 0 0 / 8%), oklch(1 0 0 / 0%) 45%);
+  }
+
+  /* Elevated surface for panels (editor/results shells, toolbars, cards). Without this,
+     bordered panels in light mode have no background of their own and blend straight into
+     the page; dark mode panels had a flat fill but no separation cue either. A restrained
+     shadow plus a top-down sheen (white in dark mode, black in light mode) gives every
+     surface a visible edge and a sense of it sitting above the page. */
+  .tool-surface {
+    @apply relative bg-card shadow-md shadow-black/[0.10];
+  }
+
+  /* Tailwind's @apply only accepts real utilities, not this file's own .surface-fill
+     selector — so the dark-mode sheen has to be repeated here rather than composed. */
+  .dark .tool-surface {
+    @apply shadow-lg shadow-black/50;
+    background-image: linear-gradient(to bottom, oklch(1 0 0 / 8%), oklch(1 0 0 / 0%) 45%);
+  }
+
+  /* The ad rail should read as a distinct, quieter zone than the tool itself — recessed
+     rather than elevated — so ads don't compete for attention with the actual content. */
+  .ad-zone {
+    @apply rounded-xl bg-black/[0.02] p-3 ring-1 ring-black/[0.05];
+  }
+  .dark .ad-zone {
+    @apply bg-white/[0.03] ring-white/[0.06];
   }
 }
 
